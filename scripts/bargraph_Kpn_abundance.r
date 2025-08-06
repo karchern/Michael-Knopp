@@ -3,7 +3,7 @@ library(readxl)
 
 #load in data
 original_data <- read_excel('/Users/neekahaack/Desktop/Typas_internship/Michael-Knopp/data/Nic_Main_Screen.xlsx')
-glimpse(data)
+print(original_data)
 
 #manipulate data
 filtered_data <- original_data %>% 
@@ -42,3 +42,5 @@ ggplot(long_data_aggregated, aes(x = Condition, y = mean_abundance, fill = Timep
     ) +
   labs(x = "Sample (Filtered Row)", y = "Kpn Abundance", title = "Kpn Abundance per Sample by Timepoint") +
   theme_minimal()
+
+  ggsave('bargraph.pdf', plot=last_plot(), path = '/Users/neekahaack/Desktop/Typas_internship/Michael-Knopp/results/plots/')

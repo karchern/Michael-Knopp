@@ -13,7 +13,7 @@ filtered_data <- original_data %>%
     GFP == 'wt' ~ RFP,
     RFP == 'wt' ~ GFP
   )) %>% 
-  mutate(Condition= fct_inorder(Condition))%>%
+  mutate(Condition= fct_inorder(Condition))%>% #keeps order of conditon from original_data for plotting
   mutate(Mutant= fct_inorder(Mutant)) %>%
   select(Mutant, Condition, selection_coefficient)
 filtered_data
@@ -36,3 +36,5 @@ ggplot(filtered_data, aes(x = Condition, y = selection_coefficient, fill= Mutant
   geom_boxplot(position=position_dodge(width=0.7)) +
   labs(x = "Condition", y = "Selection Coefficient", title = "Functional analysis") +
   theme_minimal()
+
+ggsave('boxplot.pdf', plot=last_plot(), path = '/Users/neekahaack/Desktop/Typas_internship/Michael-Knopp/results/plots/')
