@@ -45,4 +45,4 @@ ggplot(long_data_aggregated, aes(x = Mutant, y = mean_abundance, fill =Timepoint
   labs(x = "Mutant", y = "Kpn Abundance", title = "Kpn Abundance per Sample by Timepoint") +
   theme_minimal()
 
-ggsave('bargraph.pdf', plot=last_plot(), path = '/Users/neekahaack/Desktop/Typas_internship/Michael-Knopp/results/plots/')
+ggsave('Evo_bargraph.pdf', plot=last_plot(), path = '/Users/neekahaack/Desktop/Typas_internship/Michael-Knopp/results/plots/')

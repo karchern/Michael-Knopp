@@ -21,4 +21,4 @@ ggplot(filtered_data, aes(x = Mutant, y = selection_coefficient, fill= Mutant)) 
   labs(x = "Evolved clones", y = "Selection Coefficient", title = "Functional analysis") +
   theme_minimal()
 
-ggsave('boxplot.pdf', plot=last_plot(), path = '/Users/neekahaack/Desktop/Typas_internship/Michael-Knopp/results/plots/')
+ggsave('Evo_boxplot.pdf', plot=last_plot(), path = '/Users/neekahaack/Desktop/Typas_internship/Michael-Knopp/results/plots/')
