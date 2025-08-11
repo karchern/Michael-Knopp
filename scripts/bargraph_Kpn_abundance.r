@@ -26,7 +26,7 @@ long_data <- pivot_longer(
   values_to = "Abundance"
 ) %>%
   mutate(
-    Generation = str_remove(Generation, "Kpn_abundance_")
+    Generation = str_remove(Generation, "Kpn_abundance_g")
   )
 long_data
 
@@ -66,9 +66,9 @@ geom_errorbar(
   position = position_dodge()
 ) +
 labs(
-  x = "Medium",
-  y = "Kpn Abundance",
-  title = "Kpn Abundance in Medium"
+  x = "Condition",
+  y = "Kpn Abundance (%)",
+  title = "Kpn Abundance in Condition"
 ) +
 theme_presentation(
 ) +
@@ -83,7 +83,7 @@ ggsave(
   filename = here(
     "results",
     "plots",
-    "Kpn_abundance_in_Medium.pdf"
+    "Kpn_abundance_in_condition.pdf"
   ),
   width = 5.25,
   height = 2.51

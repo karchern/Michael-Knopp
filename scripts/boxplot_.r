@@ -3,7 +3,7 @@ source('/Users/neekahaack/Desktop/Typas_internship/Michael-Knopp/scripts/utils.r
 #load in data
 data <- read_csv2(
   here("data", "Nic_Main_Screen.csv")
-  )
+)
 print(data)
 
 #manipulate data
@@ -34,6 +34,10 @@ plot_object <- ggplot(
     fill = Mutant
   )
 ) +
+geom_hline(
+  yintercept = 0,
+  alpha = 0.3
+) +
 geom_boxplot(
   position = position_dodge(width = 1),
   outlier.shape = NA   # suppress outliers from boxplot
@@ -44,15 +48,16 @@ geom_jitter(
   size = 0.1
 ) + # plot all points (including "outliers")
 labs(
-  x = "Medium",
+  x = "Condition",
   y = "Selection Coefficient",
-  title = "Functional Analysis"
+  title = "Fitness Assay of Mutants"
 ) +
 theme_presentation(
 ) +
 theme(axis.text.x = element_text(
   angle = 45,
-  hjust = 1)
+  hjust = 1
+  )
 )
 print(plot_object)
 
@@ -61,7 +66,7 @@ ggsave(
   filename = here(
     "results",
     "plots",
-    "Functional_analysis_in_Medium.pdf"
+    "Fitness_assay_of_mutants.pdf"
   ),
   width = 5.8,
   height = 3.89

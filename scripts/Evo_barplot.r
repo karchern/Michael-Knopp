@@ -30,7 +30,7 @@ long_data <- pivot_longer(
   values_to = "Abundance"
 ) %>%
   mutate(
-    Generation = str_remove(Generation,"Kpn_abundance_")
+    Generation = str_remove(Generation,"Kpn_abundance_g")
   )
 long_data
 
@@ -68,8 +68,8 @@ geom_errorbar(
 ) +
 labs(
   x = "Evolved Clone",
-  y = "Kpn Abundance",
-  title = "Kpn Abundance in Mutants"
+  y = "Kpn Abundance (%)",
+  title = "Kpn Abundance in Evolved Clones"
 ) +
 theme_presentation(
 ) +

@@ -36,15 +36,16 @@ filtered_data
 #pivot data
 long_data <- pivot_longer(
   filtered_data, 
-  cols = starts_with("ratio"), #columns with names that start with ratio
+  cols = starts_with("ratio"),
   names_to = "generation",
-  values_to = "ratio") %>%
+  values_to = "ratio"
+  ) %>%
   mutate(
     generation = str_remove(
       generation,
-      "ratio_mut_over_wt_"
+      "ratio_mut_over_wt_g"
     )
-  ) #this gets rid of this portion of generation string to make x-axis cleaner
+  ) 
 long_data
 
 #plot
@@ -69,9 +70,7 @@ labs(
 ) +
 theme_presentation(
 ) +
-theme(axis.text.x = element_text(
-  angle = 45,
-  hjust = 1)
+theme(axis.text.x = element_text()
 )
 
 print(plot_object)

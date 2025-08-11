@@ -44,7 +44,7 @@ long_data <- pivot_longer(
   mutate(
     generation = str_remove(
       generation,
-      "ratio_mut_over_wt_"
+      "ratio_mut_over_wt_g"
     )
   )
 long_data
@@ -74,9 +74,7 @@ labs(
 ) +
 theme_presentation(
 ) +
-theme(axis.text.x = element_text(
-  angle = 45,
-  hjust = 1)
+theme(axis.text.x = element_text()
 )
 
 print(plot_object)
