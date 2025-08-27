@@ -8,22 +8,29 @@ print(data)
 
 #manipulate data
 filtered_data <- data %>%
+  mutate(
+    GFP = recode(GFP, "RFP" = "wt"),
+    RFP = recode(RFP, "RFP" = "wt"),
+  ) %>%
   filter(!(GFP == "wt" & RFP == "wt")) %>%
   mutate(
     Mutant = if_else(
       GFP == "wt",
       RFP,
-      GFP
-    ),
+      GFP),
     Condition = fct_inorder(Condition),
     Mutant = fct_inorder(Mutant),
+    Mutant = recode(Mutant,
+    "ompK35" = "ompK*",
+    "OXA48" = "ompK*/Oxa48",
+    "KPC2" = "ompK*/KPC2")
   ) %>%
   select(
     Mutant,
     Condition,
     selection_coefficient
   )
-filtered_data
+print(filtered_data, n=200)
 
 #plot
 plot_object <- ggplot(
@@ -34,12 +41,14 @@ plot_object <- ggplot(
     fill = Mutant
   )
 ) +
+scale_x_discrete(expand = expansion(add = 0.2)
+) +
 geom_hline(
   yintercept = 0,
   alpha = 0.3
 ) +
 geom_boxplot(
-  position = position_dodge(width = 1),
+  position = position_dodge(width = 0.9),
   outlier.shape = NA   # suppress outliers from boxplot
 ) +
 geom_jitter(
@@ -48,17 +57,26 @@ geom_jitter(
   size = 0.1
 ) + # plot all points (including "outliers")
 labs(
-  x = "Condition",
+  x = NULL,
   y = "Selection Coefficient",
   title = "Fitness Assay of Mutants"
 ) +
 theme_presentation(
 ) +
 theme(axis.text.x = element_text(
-  angle = 45,
-  hjust = 1
-  )
+    angle = 45,
+    hjust = 1),
+  legend.position = c(0.99, 0.98),
+  legend.justification = c(1, 1),
+  legend.text  = element_text(size = 8),
+  legend.title = element_text(size = 9),
+  legend.key.height = unit(10, "pt"),
+  legend.key.width  = unit(10, "pt"),
+  legend.background = element_rect(
+    color = "black",
+    linewidth = 0.4)
 )
+
 print(plot_object)
 
 ggsave(
@@ -69,5 +87,5 @@ ggsave(
     "Fitness_assay_of_mutants.pdf"
   ),
   width = 5.8,
-  height = 3.89
+  height = 5
 )

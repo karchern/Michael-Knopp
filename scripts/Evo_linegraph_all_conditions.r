@@ -10,7 +10,7 @@ print(data)
 
 #manipulate data
 filtered_data <- data %>%
-  filter((GFP == "Evo1" | RFP == "Evo2")) %>%
+  #filter((GFP == "Evo1" | RFP == "Evo2")) %>%
   mutate(
     SampleID = row_number(),
     Category = if_else(
@@ -72,15 +72,15 @@ geom_hline(
 labs(
   x = "Generation",
   y = "Ratio GFP/RFP",
-  title = "Evo1 and Evo2 to wt Ratio Over Time",
+  title = "All Evo Mutants vs Wildtype",
   
 ) +
 theme_presentation(
 ) +
 theme(
   axis.title.y = element_text(vjust = -1),
-  legend.position = "inside",
-  legend.position.inside=c(0.01,0.98),
+  legend.position = "none",
+  #legend.position.inside=c(0.01,0.98),
   legend.justification = c(0, 1),
   legend.text  = element_text(size = 8),
   legend.title = element_text(size = 9),
@@ -89,7 +89,11 @@ theme(
   legend.background = element_rect(
     color = "black",
     linewidth = 0.4)
-
+) +
+facet_wrap(
+    ~Category,
+    nrow = 2,
+    ncol = 5
 )
 
 #print(plot_object)
@@ -99,7 +103,7 @@ ggsave(
   filename = here(
     "results",
     "plots",
-    "Evo1_Evo2_to_wt_ratio_over_time.pdf"),
-  width = 6,
+    "evo_linegraph_all_conditions.pdf"),
+  width = 10,
   height = 4
 )
