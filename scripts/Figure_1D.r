@@ -86,7 +86,7 @@ ggsave(
   filename = here(
     "results",
     "plots",
-    "Fitness_assay_of_mutants.pdf"
+    "Figure_1D_Fitness_assay_of_mutants.pdf"
   ),
   width = 5.8,
   height = 5
