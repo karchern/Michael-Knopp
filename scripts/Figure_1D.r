@@ -80,6 +80,35 @@ plot_object <- ggplot(
     )
   )
 
+# Check
+ompK_mGAM_fitness <- filtered_data %>%
+  filter(Mutant == "ompK*") %>%
+  filter(Condition == "mGAM")
+
+ompK_rest_fitness <- filtered_data %>%
+  filter(Mutant == "ompK*") %>%
+  filter(Condition != "mGAM") %>%
+  group_by(
+    Condition
+  ) %>%
+  nest()
+
+# unpaired mann whitney u test against mGAM
+ompK_fitness_against_mGAM <- ompK_rest_fitness %>%
+  mutate(
+    p_value = map_dbl(
+      data,
+      ~ wilcox.test(
+        x = .$selection_coefficient,
+        y = ompK_mGAM_fitness$selection_coefficient,
+        alternative = "two.sided",
+        paired = FALSE,
+        exact = FALSE
+      )$p.value
+    )
+  ) %>%
+  select(-data)
+ompK_fitness_against_mGAM$p_value_adjusted <- p.adjust(ompK_fitness_against_mGAM$p_value, method = "BH")
 
 ggsave(
   plot = plot_object,
