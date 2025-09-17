@@ -279,7 +279,7 @@ for (taxon_level in c("species", "genus", "family", "order", "class")) {
         plot = p,
         # filename = "/g/typas/Personal_Folders/Nic/michael_visualize_in_vitro_community_comp/plots/Figure.pdf",
         filename = here("results", "plots", str_c("Figure_1A_", taxon_level, "_heatmap.pdf")),
-        width = ifelse(taxon_level == "genus", 11, 22),
+        width = ifelse(taxon_level == "genus", 11, 25),
         height = 5
     )
 }
