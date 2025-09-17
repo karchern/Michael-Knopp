@@ -80,36 +80,6 @@ plot_object <- ggplot(
     )
   )
 
-# Check
-ompK_mGAM_fitness <- filtered_data %>%
-  filter(Mutant == "ompK*") %>%
-  filter(Condition == "mGAM")
-
-ompK_rest_fitness <- filtered_data %>%
-  filter(Mutant == "ompK*") %>%
-  filter(Condition != "mGAM") %>%
-  group_by(
-    Condition
-  ) %>%
-  nest()
-
-# unpaired mann whitney u test against mGAM
-ompK_fitness_against_mGAM <- ompK_rest_fitness %>%
-  mutate(
-    p_value = map_dbl(
-      data,
-      ~ wilcox.test(
-        x = .$selection_coefficient,
-        y = ompK_mGAM_fitness$selection_coefficient,
-        alternative = "two.sided",
-        paired = FALSE,
-        exact = FALSE
-      )$p.value
-    )
-  ) %>%
-  select(-data)
-ompK_fitness_against_mGAM$p_value_adjusted <- p.adjust(ompK_fitness_against_mGAM$p_value, method = "BH")
-
 ggsave(
   plot = plot_object,
   filename = here(
@@ -120,3 +90,108 @@ ggsave(
   width = 5.8,
   height = 5
 )
+
+# Check
+for (mutant in unique(filtered_data$Mutant)) {
+  mGAM_fitness <- filtered_data %>%
+    # filter(Mutant == "ompK*") %>%
+    filter(Mutant == mutant) %>%
+    filter(Condition == "mGAM") %>%
+    mutate(Mutant = str_replace(Mutant, "\\/", "__"))
+
+  rest_fitness <- filtered_data %>%
+    # filter(Mutant == "ompK*") %>%
+    filter(Mutant == mutant) %>%
+    filter(Condition != "mGAM") %>%
+    mutate(Mutant = str_replace(Mutant, "\\/", "__")) %>%
+    group_by(
+      Condition
+    ) %>%
+    nest()
+
+  mutant <- str_replace(mutant, "\\/", "__")
+
+  # unpaired mann whitney u test against mGAM
+  fitness_against_mGAM <- rest_fitness %>%
+    mutate(
+      p_value = map_dbl(
+        data,
+        ~ wilcox.test(
+          x = .$selection_coefficient,
+          y = mGAM_fitness$selection_coefficient,
+          alternative = "two.sided",
+          paired = FALSE,
+          exact = FALSE
+        )$p.value
+      )
+    ) %>%
+    select(-data)
+
+
+  fitness_against_mGAM$p_value_adjusted <- p.adjust(fitness_against_mGAM$p_value, method = "BH")
+
+  print(mutant)
+  print("--------------------------")
+  print(fitness_against_mGAM)
+  print("#############################")
+  print("#############################")
+  print("#############################")
+}
+
+# [1] "ompK*"
+# [1] "--------------------------"
+# # A tibble: 10 × 3
+# # Groups:   Condition [10]
+#    Condition   p_value p_value_adjusted
+#    <fct>         <dbl>            <dbl>
+#  1 SPP21     0.000419          0.00140
+#  2 MB001     0.0000873         0.000749
+#  3 MB002     0.000150          0.000749
+#  4 MB003     0.00110           0.00220
+#  5 MB005     0.00270           0.00385
+#  6 MB006     0.373             0.373
+#  7 MB007     0.00270           0.00385
+#  8 MB008     0.121             0.135
+#  9 MB009     0.000684          0.00171
+# 10 MB010     0.00621           0.00776
+# [1] "#############################"
+# [1] "#############################"
+# [1] "#############################"
+# [1] "ompK*__Oxa48"
+# [1] "--------------------------"
+# # A tibble: 10 × 3
+# # Groups:   Condition [10]
+#    Condition   p_value p_value_adjusted
+#    <fct>         <dbl>            <dbl>
+#  1 SPP21     0.00110           0.00220
+#  2 MB001     0.0000873         0.000437
+#  3 MB002     0.0000873         0.000437
+#  4 MB003     0.00110           0.00220
+#  5 MB005     0.0321            0.0459
+#  6 MB006     0.0698            0.0872
+#  7 MB007     0.249             0.249
+#  8 MB008     0.223             0.247
+#  9 MB009     0.00217           0.00361
+# 10 MB010     0.000684          0.00220
+# [1] "#############################"
+# [1] "#############################"
+# [1] "#############################"
+# [1] "ompK*__KPC2"
+# [1] "--------------------------"
+# # A tibble: 10 × 3
+# # Groups:   Condition [10]
+#    Condition   p_value p_value_adjusted
+#    <fct>         <dbl>            <dbl>
+#  1 SPP21     0.0192            0.0275
+#  2 MB001     0.0000873         0.000175
+#  3 MB002     0.0000873         0.000175
+#  4 MB003     0.0698            0.0698
+#  5 MB005     0.0000873         0.000175
+#  6 MB006     0.0000873         0.000175
+#  7 MB007     0.00334           0.00557
+#  8 MB008     0.0272            0.0340
+#  9 MB009     0.0321            0.0357
+# 10 MB010     0.0000873         0.000175
+# [1] "#############################"
+# [1] "#############################"
+# [1] "#############################"
