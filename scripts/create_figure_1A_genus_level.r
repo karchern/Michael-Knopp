@@ -8,6 +8,9 @@ library(here)
 
 source(here("scripts", "utils.r"))
 
+taxon_level <- "genus"
+# taxon_level <- "species"
+
 # bork <- readRDS("/g/typas/Personal_Folders/Nic/personal_communities_and_strain_diversity/taxonomic_profiles/WGS/XXX_MB_communities_bork/Results/collated/res_mOTUs.rds")
 bork <- read_tsv(here("data", "WGS_profiles_motus3_1.tsv"))
 bork <- bork %>%
@@ -84,6 +87,15 @@ shannon_diversity_rarefied <- all_data_rarefied_long %>%
         `Shannon\ndiversity` = vegan::diversity(count, index = "shannon")
     )
 
+extract_2_first_whitespace_separated_fields <- function(x) {
+    fields <- str_split_fixed(x, " ", 3)
+    if (ncol(fields) >= 2) {
+        return(paste(fields[, 1], fields[, 2], sep = " "))
+    } else {
+        return(x)
+    }
+}
+
 # A: genus-level relative abundance heatmap
 all_data_genus <- all_data %>%
     group_by(donor) %>%
@@ -95,20 +107,28 @@ all_data_genus <- all_data %>%
     mutate(motu_full = str_replace_all(motu_full, "\\[Eubacterium\\]", "Eubacterium")) %>%
     mutate(motu_full = str_replace_all(motu_full, "\\[Clostridium\\]", "Clostridium")) %>%
     mutate(motu_full = str_replace_all(motu_full, "\\[Ruminococcus\\]", "Ruminococcus")) %>%
+    mutate(species = str_split_fixed(motu_full, "\\|", 7)[, 7]) %>%
+    mutate(species = str_replace(species, "s__", "")) %>%
+    mutate(species = str_replace(species, "^ ", "")) %>%
+    mutate(species = map_chr(species, extract_2_first_whitespace_separated_fields)) %>%
+    mutate(species = str_replace(species, "\\|.*", "")) %>%
     mutate(genus = str_split_fixed(motu_full, "\\|", 7)[, 6]) %>%
     mutate(genus = str_replace(genus, "g__", "")) %>%
     mutate(family = str_split_fixed(motu_full, "\\|", 7)[, 5]) %>%
     mutate(order = str_split_fixed(motu_full, "\\|", 7)[, 4]) %>%
-    group_by(donor, genus) %>%
+    mutate(class = str_split_fixed(motu_full, "\\|", 7)[, 3]) %>%
+    group_by(donor, .data[[taxon_level]]) %>%
     summarize(`Relative abundance` = sum(`Relative abundance`)) %>%
-    filter(!str_detect(genus, "incert")) %>%
-    filter(!str_detect(genus, "gen\\.")) %>%
-    filter(!str_detect(genus, "fam\\.")) %>%
-    filter(!str_detect(genus, "order"))
+    filter(!str_detect(.data[[taxon_level]], "incert")) %>%
+    filter(!str_detect(.data[[taxon_level]], "sp.")) %>%
+    filter(!str_detect(.data[[taxon_level]], " species")) %>%
+    filter(!str_detect(.data[[taxon_level]], "gen\\.")) %>%
+    filter(!str_detect(.data[[taxon_level]], "fam\\.")) %>%
+    filter(!str_detect(.data[[taxon_level]], "order"))
 
 donor_hclust_object <- all_data_genus %>%
     pivot_wider(
-        names_from = genus,
+        names_from = all_of(taxon_level),
         values_from = `Relative abundance`,
         values_fill = 0
     ) %>%
@@ -125,15 +145,17 @@ genus_hclust_object <- all_data_genus %>%
         values_fill = 0
     ) %>%
     as.data.frame() %>%
-    column_to_rownames("genus") %>%
+    column_to_rownames(taxon_level) %>%
     dist() %>%
     hclust()
 genus_hclust_order <- genus_hclust_object$labels[genus_hclust_object$order]
 
 # reorder donors
 all_data_genus <- all_data_genus %>%
+    # mutate(donor = factor(donor, levels = donor_hclust_order)) %>%
+    # mutate(genus = factor(genus, levels = genus_hclust_order))
     mutate(donor = factor(donor, levels = donor_hclust_order)) %>%
-    mutate(genus = factor(genus, levels = genus_hclust_order))
+    mutate("{taxon_level}" := factor(.data[[taxon_level]], levels = genus_hclust_order))
 shannon_diversity_unrarefied <- shannon_diversity_unrarefied %>%
     mutate(donor = factor(donor, levels = donor_hclust_order))
 richness_rarefied <- richness_rarefied %>%
@@ -141,14 +163,14 @@ richness_rarefied <- richness_rarefied %>%
 
 # Remove lowly abundant genera
 all_data_genus <- all_data_genus %>%
-    group_by(genus) %>%
+    group_by(.data[[taxon_level]]) %>%
     filter(any(`Relative abundance` > 0.01))
 
 p_genus_heatmap <- ggplot() +
     geom_tile(
         data = all_data_genus,
         # aes(x = genus, y = donor, fill = log10(`Relative abundance` + pc_WGS)),
-        aes(x = genus, y = donor, fill = `Relative abundance`),
+        aes(x = .data[[taxon_level]], y = donor, fill = `Relative abundance`),
         width = 1,
         height = 1
     ) +
