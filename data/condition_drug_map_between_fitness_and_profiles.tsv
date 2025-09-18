@@ -1,0 +1,69 @@
+Medium	Drug	Medium_new	Drug_new
+MGAM	5-fluorouracil		
+MGAM	acarbose	mGAM	acarbose
+MGAM	albumin (high)	mGAM	albumin_high
+MGAM	albumin (low)	mGAM	albumin_low
+MGAM	alexidine	mGAM	alexidine
+MGAM	ampicillin	mGAM	ampicillin
+MGAM	ampicillin+ciprofloxacin	mGAM	ampicillin_ciprofloxacin
+MGAM	auranofin		
+MGAM	azlocillin	mGAM	azlocilin
+MGAM	bile salts	mGAM	bile_salts
+MGAM	carbadox	mGAM	carbadox
+MGAM	cefixime	mGAM	cefixime
+MGAM	cefotetan	mGAM	cefotetan
+MGAM	cefuroxime	mGAM	cefuroxime
+MGAM	cephalexin	mGAM	cephalexin
+MGAM	chloramphenicol	mGAM	chloramphenicol
+MGAM	chlorpromazine		
+MGAM	chlorprothixene		
+MGAM	ciprofloxacin	mGAM	ciprofloxacin
+MGAM	clindamycin	mGAM	clindamycin
+MGAM	colistin		
+MGAM	dipyridil	mGAM	dipyridyl
+MGAM	efavirenz		
+MGAM	erythromycin	mGAM	erythromycin
+MGAM	erythromycin+ciprofloxacin	mGAM	erythromycin_ciprofloxacin
+MGAM	floxuridine	mGAM	floxuridine
+MGAM	fluoxetine	mGAM	fluoxetine
+MGAM	high salt	mGAM	salt_high
+MGAM	hih ph	mGAM	pH_high
+MGAM	hydrogen_peroxide_0.5mm		
+MGAM	imipenem	mGAM	imipenem
+MGAM	inulin_0.5%		
+MGAM	low ph	mGAM	pH_low
+MGAM	meropenem		
+MGAM	methotrexate	mGAM	methotrexate
+MGAM	metronidazole	mGAM	metronidazole
+MGAM	milk_25%		
+MGAM	mitomycinc		
+M9	mucic-acid	mGAM	mucic_acid
+MGAM	mucus_0.1%		
+BB	no drug	BB	none
+BHI	no drug		
+BSM	no drug		
+DHL	no drug	DHL	none
+FAB	no drug	FAB	none
+LB	no drug	LB	none
+M17	no drug	M17	none
+MGAM	no drug	mGAM	none
+MRS	no drug	MRS	none
+RCM	no drug	RCM	none
+Red_bull	no drug	M9-RB	none
+SB	no drug		
+TB	no drug	TB	none
+WCA	no drug		
+MGAM	novobiocin	mGAM	novobiocin
+MGAM	ofloxacin	mGAM	ofloxacin
+MGAM	rifamixin-high	mGAM	rifaximin_high
+MGAM	rifaximin (low)	mGAM	rifaximin_low
+MGAM	sheep blood_5%		
+MGAM	simvastatin	mGAM	simvastatin
+MGAM	sparfloxacin	mGAM	sparfloxacin
+MGAM	streptomycin	mGAM	streptomycin
+MGAM	tetracycline	mGAM	tetracycline
+MGAM	ticlopidine		
+MGAM	triclosan		
+MGAM	trimethoprim		
+MGAM	tylosin	mGAM	tylosin
+MGAM	vancomycin	mGAM	vancomycin
