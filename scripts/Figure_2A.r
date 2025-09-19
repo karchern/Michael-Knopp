@@ -41,12 +41,12 @@ profiles <- profiles %>%
     mutate(
         condition_group = case_when(
             Drug == "no drug" ~ "Medium perturbation (no drug)",
-            TRUE ~ "Drug perturbation (in mGAM)"
+            TRUE ~ "non-Medium based perturbation"
         )
     ) %>%
     mutate(
         final_condition = ifelse(
-            condition_group == "Drug perturbation (in mGAM)",
+            condition_group == "non-Medium based perturbation",
             Drug,
             Medium
         )
@@ -123,12 +123,12 @@ fitness <- read_tsv(here("data", "subcommunity_fitness_data.tsv")) %>%
     mutate(
         condition_group = case_when(
             Drug == "no drug" ~ "Medium perturbation (no drug)",
-            TRUE ~ "Drug perturbation (in mGAM)"
+            TRUE ~ "non-Medium based perturbation"
         )
     ) %>%
     mutate(
         final_condition = ifelse(
-            condition_group == "Drug perturbation (in mGAM)",
+            condition_group == "non-Medium based perturbation",
             Drug,
             Medium
         )
