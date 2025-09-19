@@ -40,7 +40,7 @@ profiles <- profiles %>%
     filter(Donor == "MB003") %>%
     mutate(
         condition_group = case_when(
-            Drug == "no drug" ~ "Medium perturbation (no drug)",
+            Drug == "no drug" ~ "Medium-based perturbation",
             TRUE ~ "non-Medium based perturbation"
         )
     ) %>%
@@ -122,7 +122,7 @@ fitness <- read_tsv(here("data", "subcommunity_fitness_data.tsv")) %>%
     # mutate(Drug = ifelse(Drug == "none", "no drug", Drug)) %>%
     mutate(
         condition_group = case_when(
-            Drug == "no drug" ~ "Medium perturbation (no drug)",
+            Drug == "no drug" ~ "Medium-based perturbation",
             TRUE ~ "non-Medium based perturbation"
         )
     ) %>%
@@ -174,21 +174,21 @@ fitness <- fitness %>%
 # Create a highlight dataframe for bars where abs(ratio) > 1.5
 
 p <- ggplot() +
-    geom_segment(
-        data = fitness %>%
-            mutate(show_arrow = as.character(ratio <= 2)) %>%
-            select(final_condition, condition_group, show_arrow) %>%
-            mutate(
-                x = final_condition,
-                xend = final_condition,
-                y = 1.2,
-                yend = 1.05
-            ),
-        # arrow
-        aes(x = x, xend = xend, y = y, yend = yend, alpha = show_arrow),
-        arrow = arrow(length = unit(0.1, "cm")),
-        show.legend = FALSE
-    ) +
+    # geom_segment(
+    #     data = fitness %>%
+    #         mutate(show_arrow = as.character(ratio <= 2)) %>%
+    #         select(final_condition, condition_group, show_arrow) %>%
+    #         mutate(
+    #             x = final_condition,
+    #             xend = final_condition,
+    #             y = 1.2,
+    #             yend = 1.05
+    #         ),
+    #     # arrow
+    #     aes(x = x, xend = xend, y = y, yend = yend, alpha = show_arrow),
+    #     arrow = arrow(length = unit(0.1, "cm")),
+    #     show.legend = FALSE
+    # ) +
     geom_bar(
         data = profiles,
         aes(x = final_condition, y = relative_abundance, fill = .data[[taxon_level]]),
@@ -212,11 +212,11 @@ p <- ggplot() +
 p2 <- ggplot() +
     geom_hline(yintercept = 2, linetype = "dashed", color = "grey50") +
     geom_point(
-        data = fitness %>% mutate(co = as.character(ratio > 2)),
+        data = fitness %>% mutate(co = as.character(ratio <= 2)),
         aes(x = final_condition, y = ratio, alpha = co),
         size = 0.5, show.legend = FALSE
     ) +
-    geom_linerange(data = fitness %>% mutate(co = ratio > 2), aes(ymin = ratio - sd_ratio, ymax = ratio + sd_ratio, x = final_condition, alpha = co), size = 0.3, show.legend = FALSE) +
+    geom_linerange(data = fitness %>% mutate(co = ratio <= 2), aes(ymin = ratio - sd_ratio, ymax = ratio + sd_ratio, x = final_condition, alpha = co), size = 0.3, show.legend = FALSE) +
     scale_color_manual(
         values = c("TRUE" = "red", "FALSE" = "black")
     ) +
@@ -226,7 +226,7 @@ p2 <- ggplot() +
     # geom_bar(
     #     data = fitness %>%
     #         ungroup() %>%
-    #         filter(ratio > 2) %>%
+    #         filter(ratio <= 2 ) %>%
     #         select(final_condition, condition_group) %>%
     #         distinct() %>%
     #         mutate(relative_abundance = max(fitness$ratio + fitness$sd_ratio) * 1.01),
@@ -309,7 +309,7 @@ genus_fitness_cor_identity <- genus_fitness_cor_identity %>%
 
 p_sc <- ggplot() +
     geom_point(
-        data = genus_fitness_j %>% mutate(`Fitness ratio` = ifelse(as.character(ratio > 2), "high", "low")),
+        data = genus_fitness_j %>% mutate(`Fitness ratio` = ifelse(as.character(ratio <= 2), "high", "low")),
         aes(x = log10(rel_abund + 1e-5), y = ratio, color = `Fitness ratio`),
         alpha = 0.2
     ) +
@@ -336,7 +336,7 @@ ggsave(
     filename = "/Users/karcher/Michael-Knopp/results/plots/supplementary_fitness_abundance_correlations.pdf",
 )
 
-# For each genus, compare relative abundance between ratio > 2 and ratio <= 2 using Wilcoxon test
+# For each genus, compare relative abundance between ratio <= 2  and ratio <= 2 using Wilcoxon test
 
 genus_fitness_j <- profiles %>%
     filter(genus != "Other") %>%
@@ -347,7 +347,7 @@ genus_fitness_j <- profiles %>%
         by = "final_condition"
     ) %>%
     mutate(
-        `Fitness ratio` = ifelse(ratio > 2, "high", "low")
+        `Fitness ratio` = ifelse(ratio <= 2, "high", "low")
     ) %>%
     mutate(
         rel_abund_log10 = log10(rel_abund + 1e-5)
@@ -384,7 +384,7 @@ p_box <- ggplot(genus_fitness_j, aes(x = `Fitness ratio`, y = rel_abund_log10, f
     facet_wrap(. ~ genus, scales = "free_y") +
     theme_presentation() +
     scale_fill_manual(values = c("high" = "#E41A1C", "low" = "#377EB8")) +
-    # xlab("High fitness (ratio > 2)") +
+    # xlab("High fitness (ratio <= 2 )") +
     ylab("Relative abundance") +
     geom_text(
         data = genus_fitness_wilcox,
