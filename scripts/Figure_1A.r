@@ -88,15 +88,6 @@ for (taxon_level in c("species", "genus", "family", "order", "class")) {
             `Shannon\ndiversity` = vegan::diversity(count, index = "shannon")
         )
 
-    extract_2_first_whitespace_separated_fields <- function(x) {
-        fields <- str_split_fixed(x, " ", 3)
-        if (ncol(fields) >= 2) {
-            return(paste(fields[, 1], fields[, 2], sep = " "))
-        } else {
-            return(x)
-        }
-    }
-
     # A: genus-level relative abundance heatmap
     all_data_genus <- all_data %>%
         group_by(donor) %>%
