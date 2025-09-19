@@ -17,8 +17,15 @@ for (taxon_level in c("species", "genus", "family", "order", "class")) {
     bork <- bork %>%
         # as.data.frame() %>%
         # rownames_to_column("motu_full") %>%
-        filter(str_detect(dataset, "Bork")) %>%
+        filter(str_detect(dataset, "Zimmermann")) %>%
+        filter(oxygen == "AA") %>%
+        inner_join(
+            data.frame(donor = c(
+                "MB001", "MB002", "MB003", "MB005", "MB006", "MB007", "MB008", "MB009", "MB010"
+            ))
+        ) %>%
         select(-oxygen, -cultivation, -dataset)
+
     # pivot_longer(-motu_full, names_to = "sampleID", values_to = "count")
     # From Michael's email
     # bork_meta <- tibble(
