@@ -256,3 +256,151 @@ ggsave(
     width = 16,
     height = 5.5
 )
+
+# Also correlate all genera with all fitness values
+# For each genus, compute correlation with fitness ratio across conditions
+genus_fitness_j <- profiles %>%
+    filter(genus != "Other") %>%
+    group_by(final_condition, genus) %>%
+    summarize(rel_abund = mean(relative_abundance), .groups = "drop") %>%
+    inner_join(
+        fitness %>% select(final_condition, ratio),
+        by = "final_condition"
+    )
+
+genus_fitness_cor_log10 <- genus_fitness_j %>%
+    group_by(genus) %>%
+    mutate(
+        rel_abund_log10 = log10(rel_abund + 1e-5)
+    ) %>%
+    select(-rel_abund) %>%
+    summarize(
+        cor = cor(rel_abund_log10, ratio, use = "complete.obs"),
+        p.value = cor.test(rel_abund_log10, ratio)$p.value,
+        n = n()
+    ) %>%
+    arrange(desc(cor))
+
+genus_fitness_cor_identity <- genus_fitness_j %>%
+    group_by(genus) %>%
+    summarize(
+        cor = cor(rel_abund, ratio, use = "complete.obs"),
+        p.value = cor.test(rel_abund, ratio)$p.value,
+        n = n()
+    ) %>%
+    arrange(desc(cor))
+
+genus_order <- genus_fitness_cor_log10 %>%
+    arrange(desc(cor)) %>%
+    pull(genus)
+
+genus_fitness_j <- genus_fitness_j %>%
+    mutate(
+        genus = factor(genus, levels = genus_order)
+    )
+genus_fitness_cor_log10 <- genus_fitness_cor_log10 %>%
+    mutate(
+        genus = factor(genus, levels = genus_order)
+    )
+genus_fitness_cor_identity <- genus_fitness_cor_identity %>%
+    mutate(
+        genus = factor(genus, levels = genus_order)
+    )
+
+p_sc <- ggplot() +
+    geom_point(
+        data = genus_fitness_j %>% mutate(`Fitness ratio` = ifelse(as.character(ratio > 2), "high", "low")),
+        aes(x = log10(rel_abund + 1e-5), y = ratio, color = `Fitness ratio`),
+        alpha = 0.2
+    ) +
+    geom_text(
+        data = genus_fitness_cor_log10,
+        aes(
+            x = -4.85,
+            y = 5,
+            label = paste0(genus, "\n", "r=", round(cor, 2), "\n", "p=", signif(p.value, 2))
+        ),
+        hjust = 0,
+        vjust = 1,
+        size = 2
+    ) +
+    theme_presentation() +
+    facet_wrap(. ~ genus) +
+    scale_color_manual(values = c("high" = "#E41A1C", "low" = "#377EB8")) +
+    xlab("log10(Relative abundance + 1e-5)") +
+    ylab("Fitness ratio ompK35/36/ WT") +
+    NULL
+
+ggsave(
+    plot = p_sc,
+    filename = "/Users/karcher/Michael-Knopp/results/plots/supplementary_fitness_abundance_correlations.pdf",
+)
+
+# For each genus, compare relative abundance between ratio > 2 and ratio <= 2 using Wilcoxon test
+
+genus_fitness_j <- profiles %>%
+    filter(genus != "Other") %>%
+    group_by(final_condition, genus) %>%
+    summarize(rel_abund = mean(relative_abundance), .groups = "drop") %>%
+    inner_join(
+        fitness %>% select(final_condition, ratio),
+        by = "final_condition"
+    ) %>%
+    mutate(
+        `Fitness ratio` = ifelse(ratio > 2, "high", "low")
+    ) %>%
+    mutate(
+        rel_abund_log10 = log10(rel_abund + 1e-5)
+    ) %>%
+    select(-rel_abund)
+
+# Wilcoxon test for each genus
+genus_fitness_wilcox <- genus_fitness_j %>%
+    group_by(genus) %>%
+    summarize(
+        p.value = tryCatch(
+            wilcox.test(rel_abund_log10 ~ `Fitness ratio`)$p.value,
+            error = function(e) NA_real_
+        ),
+        n_high = sum(`Fitness ratio` == "high"),
+        n_low = sum(!`Fitness ratio` == "low"),
+        .groups = "drop"
+    ) %>%
+    arrange(p.value)
+
+# DOn't compute this, instead use same order as correlation plot
+# genus_order <- genus_fitness_wilcox %>%
+#     arrange(p.value) %>%
+#     pull(genus)
+
+genus_fitness_j <- genus_fitness_j %>%
+    mutate(
+        genus = factor(genus, levels = genus_order)
+    )
+
+# Boxplot of relative abundance by fitness group for each genus
+p_box <- ggplot(genus_fitness_j, aes(x = `Fitness ratio`, y = rel_abund_log10, fill = `Fitness ratio`)) +
+    geom_boxplot(outlier.size = 0.5) +
+    facet_wrap(. ~ genus, scales = "free_y") +
+    theme_presentation() +
+    scale_fill_manual(values = c("high" = "#E41A1C", "low" = "#377EB8")) +
+    # xlab("High fitness (ratio > 2)") +
+    ylab("Relative abundance") +
+    geom_text(
+        data = genus_fitness_wilcox,
+        aes(
+            x = 1.5, y = Inf, label = paste0("p=", signif(p.value, 2))
+        ),
+        inherit.aes = FALSE,
+        vjust = 1.2,
+        hjust = 0.5,
+        size = 2
+    ) +
+    NULL
+
+ggsave(
+    plot = p_box,
+    filename = "/Users/karcher/Michael-Knopp/results/plots/supplementary_fitness_abundance_wilcox_boxplots.pdf",
+    width = 12,
+    height = 6
+)
