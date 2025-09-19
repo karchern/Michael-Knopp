@@ -14,14 +14,8 @@ bork <- read_tsv(here("data", "WGS_profiles_motus3_1.tsv"))
 bork <- bork %>%
     # as.data.frame() %>%
     # rownames_to_column("motu_full") %>%
-    filter(str_detect(dataset, "Zimmermann")) %>%
-    filter(oxygen == "AA") %>%
-    select(-oxygen, -cultivation, -dataset) %>%
-    inner_join(
-        data.frame(donor = c(
-            "MB001", "MB002", "MB003", "MB005", "MB006", "MB007", "MB008", "MB009", "MB010"
-        ))
-    )
+    filter(str_detect(dataset, "Bork")) %>%
+    select(-oxygen, -cultivation, -dataset)
 all_data <- rbind(
     # zm,
     bork
