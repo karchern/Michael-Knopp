@@ -87,7 +87,7 @@ p2 <- ggplot(
 # Use patchwork to assembly plots, ensuring that coordinates are conserved so Michael can do this in Illustrator
 p_combined <- p1 + p2 + plot_layout(ncol = 1)
 ggsave(
-    here("results/plots", "supplementary_figure_XX_eco_panel_abundances_and_compensated_day1.pdf"),
+    here("results/plots", "eco_panel_abundances_and_compensated_day1.pdf"),
     p_combined,
     width = 9,
     height = 6
