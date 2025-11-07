@@ -10,6 +10,9 @@ library(ggrepel)
 
 source(here("scripts", "utils.r"))
 
+# plan: plot non-adjusted p-value, don't color anything, other than the 3 things that Michael will send you.
+# then mention in the legends that these where identified as hits in the adjusted analysis.
+
 tpp <- read_csv("/Users/karcher/Michael-Knopp/data/TPP_results_all.csv") %>%
     group_by(
         score, comparison
@@ -39,8 +42,9 @@ for (sc in c(
             ) %>%
             mutate(hit = !hit == "no_hit")
         p <- ggplot() +
-            geom_point(data = tmp %>% filter(!hit), aes(x = logFC, y = -log10(adj.P.Val)), color = "grey", alpha = 0.1) +
-            geom_point(data = tmp %>% filter(hit), aes(x = logFC, y = -log10(adj.P.Val)), color = "red", alpha = 0.5) +
+            # geom_point(data = tmp %>% filter(!hit), aes(x = logFC, y = -log10(P.Value.limma)), color = "grey", alpha = 0.1) +
+            # geom_point(data = tmp %>% filter(hit), aes(x = logFC, y = -log10(P.Value.limma)), color = "red", alpha = 0.5) +
+            geom_point(data = tmp, aes(x = logFC, y = -log10(P.Value.limma)), color = "grey", alpha = 0.5) +
             # geom_text_repel(
             #     data = tmp %>% filter(hit),
             #     aes(x = logFC, y = -log10(adj.P.Val), label = gene_name),
