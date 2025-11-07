@@ -10,7 +10,11 @@ library(ggrepel)
 
 source(here("scripts", "utils.r"))
 
-tpp <- read_csv("/Users/karcher/Michael-Knopp/data/TPP_results_all.csv")
+tpp <- read_csv("/Users/karcher/Michael-Knopp/data/TPP_results_all.csv") %>%
+    group_by(
+        score, comparison
+    ) %>%
+    mutate(p_adj_v2 = p.adjust(P.Value.limma, method = "BH"))
 
 vc_plots <- list()
 comparisons <- c(
@@ -37,24 +41,26 @@ for (sc in c(
         p <- ggplot() +
             geom_point(data = tmp %>% filter(!hit), aes(x = logFC, y = -log10(adj.P.Val)), color = "grey", alpha = 0.1) +
             geom_point(data = tmp %>% filter(hit), aes(x = logFC, y = -log10(adj.P.Val)), color = "red", alpha = 0.5) +
-            geom_text_repel(
-                data = tmp %>% filter(hit),
-                aes(x = logFC, y = -log10(adj.P.Val), label = gene_name),
-                size = 3,
-                max.overlaps = Inf
-            ) +
+            # geom_text_repel(
+            #     data = tmp %>% filter(hit),
+            #     aes(x = logFC, y = -log10(adj.P.Val), label = gene_name),
+            #     size = 3,
+            #     max.overlaps = Inf
+            # ) +
             theme_presentation() +
             ggtitle(comp)
-        vc_plots[[comp]] <- p
+        vc_plots[[str_c(comp, sc, sep = "___")]] <- p
     }
 }
 
 walk(
     names(vc_plots),
     function(x) {
+        xx <- str_split(x, "___")[[1]][1]
+        sc <- str_split(x, "___")[[1]][2]
         ggsave(
             plot = vc_plots[[x]],
-            filename = here("results/plots", paste0("volcano_plot_", x, ".pdf")),
+            filename = here("results/plots", paste0("volcano_plot_", xx, "__", sc, ".pdf")),
             width = 4,
             height = 3
         )
