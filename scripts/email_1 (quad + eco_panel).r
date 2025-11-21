@@ -61,8 +61,13 @@ p1 <- ggplot(
     scale_fill_manual(values = strain_colors) +
     theme_presentation() +
     # theme(axis.text.x = element_blank()) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    xlab("Various strains")
+    theme(
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.title.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_text(size = 6),
+        axis.title.y = element_text(size = 8)
+    )
 
 # ggsave(
 #     here("results/plots", "supplementary_figure_XX_quad_panel_abundances_day1.pdf"),
@@ -79,12 +84,17 @@ p2 <- ggplot(
         summarize(sdd = sd(compensated), compensated = mean(compensated)),
     aes(x = fourth_competitor_name, y = compensated)
 ) +
-    geom_pointrange(aes(ymin = compensated - sdd, ymax = compensated + sdd), size = 0.2) +
+    geom_pointrange(aes(ymin = compensated - sdd, ymax = compensated + sdd), size = 0.1) +
     # scale_fill_manual(values = strain_colors) +
     theme_presentation() +
     # theme(axis.text.x = element_blank()) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    xlab("E. coli strains")
+    theme(
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 6),
+        axis.title.x = element_blank(),
+        axis.text.y = element_text(size = 6),
+        axis.title.y = element_text(size = 8),
+        axis.ticks.x = element_line(size = 0.2)
+    )
 
 # ggsave(
 #     here("results/plots", "supplementary_figure_XX_quad_panel_compensated_day1.pdf"),
@@ -154,8 +164,12 @@ p1 <- ggplot(
     geom_bar(stat = "identity", show.legend = TRUE) +
     scale_fill_manual(values = strain_colors) +
     theme_presentation() +
-    theme(axis.text.x = element_blank()) +
-    xlab("E. coli strains")
+    theme(
+        axis.text.x = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.y = element_text(size = 6),
+        axis.title.y = element_text(size = 8)
+    )
 
 # ggsave(
 #     here("results/plots", "supplementary_figure_XX_eco_panel_abundances_day1.pdf"),
@@ -172,11 +186,15 @@ p2 <- ggplot(
         summarize(sdd = sd(compensated), compensated = mean(compensated)),
     aes(x = third_competitor, y = compensated)
 ) +
-    geom_pointrange(aes(ymin = compensated - sdd, ymax = compensated + sdd), size = 0.2) +
+    geom_pointrange(aes(ymin = compensated - sdd, ymax = compensated + sdd), size = 0.0002, linewidth = 0.1) +
     scale_fill_manual(values = strain_colors) +
     theme_presentation() +
-    theme(axis.text.x = element_blank()) +
-    xlab("E. coli strains")
+    theme(
+        axis.text.x = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.y = element_text(size = 6),
+        axis.title.y = element_text(size = 8)
+    )
 
 # ggsave(
 #     here("results/plots", "supplementary_figure_XX_eco_panel_compensated_day1.pdf"),
@@ -200,6 +218,7 @@ p_combined <- (p1_Eco + theme(axis.ticks.x = element_blank())) + (p2_Eco + theme
 ggsave(
     here("results/plots", "eco_plus_quad_panel_abundances_and_compensated_day1.pdf"),
     p_combined,
-    width = 14,
-    height = 4
+    width = 18,
+    height = 5,
+    unit = "cm"
 )
