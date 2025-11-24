@@ -31,8 +31,8 @@ for (comp in comparisons) {
     tmp <- limma %>%
         filter(comparison == comp)
     p <- ggplot() +
-        geom_point(data = tmp %>% filter(!hit), aes(x = logFC, y = -log10(adj.P.Val)), color = "grey", alpha = 0.1) +
-        geom_point(data = tmp %>% filter(hit), aes(x = logFC, y = -log10(adj.P.Val)), color = "red", alpha = 0.5) +
+        geom_point(data = tmp %>% filter(!hit), aes(x = logFC, y = -log10(adj.P.Val)), color = "grey", alpha = 0.5) +
+        geom_point(data = tmp %>% filter(hit), aes(x = logFC, y = -log10(adj.P.Val)), color = "red", alpha = 0.8) +
         geom_text_repel(
             data = tmp %>% filter(hit),
             aes(x = logFC, y = -log10(adj.P.Val), label = gene_name),

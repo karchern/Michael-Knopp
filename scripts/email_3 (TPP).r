@@ -42,15 +42,15 @@ for (sc in c(
             ) %>%
             mutate(hit = !hit == "no_hit")
         p <- ggplot() +
-            # geom_point(data = tmp %>% filter(!hit), aes(x = logFC, y = -log10(P.Value.limma)), color = "grey", alpha = 0.1) +
-            # geom_point(data = tmp %>% filter(hit), aes(x = logFC, y = -log10(P.Value.limma)), color = "red", alpha = 0.5) +
-            geom_point(data = tmp, aes(x = logFC, y = -log10(P.Value.limma)), color = "grey", alpha = 0.5) +
-            # geom_text_repel(
-            #     data = tmp %>% filter(hit),
-            #     aes(x = logFC, y = -log10(adj.P.Val), label = gene_name),
-            #     size = 3,
-            #     max.overlaps = Inf
-            # ) +
+            geom_point(data = tmp %>% filter(!hit), aes(x = logFC, y = -log10(adj.P.Val)), color = "grey", alpha = 0.5) +
+            geom_point(data = tmp %>% filter(hit), aes(x = logFC, y = -log10(adj.P.Val)), color = "red", alpha = 0.8) +
+            # geom_point(data = tmp, aes(x = logFC, y = -log10(P.Value.limma)), color = "grey", alpha = 0.2) +
+            geom_text_repel(
+                data = tmp %>% filter(hit),
+                aes(x = logFC, y = -log10(adj.P.Val), label = gene_name),
+                size = 3,
+                max.overlaps = Inf
+            ) +
             theme_presentation() +
             ggtitle(comp)
         vc_plots[[str_c(comp, sc, sep = "___")]] <- p
@@ -65,8 +65,9 @@ walk(
         ggsave(
             plot = vc_plots[[x]],
             filename = here("results/plots", paste0("volcano_plot_", xx, "__", sc, ".pdf")),
-            width = 4,
-            height = 3
+            width = 12,
+            height = 12,
+            units = "cm"
         )
     }
 )
