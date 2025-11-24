@@ -75,36 +75,16 @@ profiles <- profiles %>%
 
 genus_colors <- setNames(
     c(
-        "#E41A1C", # red
-        "#377EB8", # blue
-        "#4DAF4A", # green
-        "#FF7F00", # orange
-        "#984EA3", # purple
-        "#FFFF33", # yellow
-        "#A65628", # brown
-        "#F781BF", # pink
-        "#999999", # dark grey
-        "#66C2A5", # teal
-        "#FC8D62", # salmon
-        "#8DA0CB", # light blue
-        "#E78AC3", # magenta
-        "#A6D854", # lime
-        "#FFD92F", # gold
-        "#E5C494", # beige
-        "#B3B3B3", # light grey
-        "#1B9E77", # dark teal
-        "#D95F02", # dark orange
-        "#7570B3", # indigo
-        "#E7298A", # hot pink
-        "#66A61E", # olive
-        "#A6761D", # ochre
-        "grey80" # for "Other"
+        "#9D3839", "#537794", "#6A9B68", "#CB8B4B", "#835E88", "#F3F38D",
+        "#875F48", "#D196B5", "#999999", "#85B3A4", "#ff4f0f", "#96A0B5",
+        "#C99BB7", "#B0C987", "#E8D580", "#D7C6AE", "#B3B3B3", "#478875",
+        "#A96C3D", "#777596", "#AA4B7B", "#759551", "#90784C", "#CCCCCC"
     ),
     c(abundant_genera, "Other")
 )
 
-genus_colors["Eggerthella"] <- "#FF1493" # deep pink
-genus_colors["Parabacteroides"] <- "#00CED1" # dark turquoise
+genus_colors["Eggerthella"] <- "#d8599d" # deep pink
+genus_colors["Parabacteroides"] <- "#5bc3c4" # dark turquoise
 
 fitness <- read_tsv(here("data", "subcommunity_fitness_data.tsv")) %>%
     rename(
@@ -173,22 +153,8 @@ fitness <- fitness %>%
 
 # Create a highlight dataframe for bars where abs(ratio) > 1.5
 
+# ...existing code...
 p <- ggplot() +
-    # geom_segment(
-    #     data = fitness %>%
-    #         mutate(show_arrow = as.character(ratio <= 2)) %>%
-    #         select(final_condition, condition_group, show_arrow) %>%
-    #         mutate(
-    #             x = final_condition,
-    #             xend = final_condition,
-    #             y = 1.2,
-    #             yend = 1.05
-    #         ),
-    #     # arrow
-    #     aes(x = x, xend = xend, y = y, yend = yend, alpha = show_arrow),
-    #     arrow = arrow(length = unit(0.1, "cm")),
-    #     show.legend = FALSE
-    # ) +
     geom_bar(
         data = profiles,
         aes(x = final_condition, y = relative_abundance, fill = .data[[taxon_level]]),
@@ -198,16 +164,32 @@ p <- ggplot() +
     scale_alpha_manual(values = c("TRUE" = 1, "FALSE" = 0)) +
     theme_presentation() +
     theme(
-        axis.text.x = element_text(angle = 45, hjust = 1),
-        strip.text.x = element_blank()
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 6),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(size = 8),
+        axis.text.y = element_text(size = 6),
+        strip.text.x = element_blank(),
+        # reduce legend font size
+        legend.text = element_text(size = 6),
+        legend.title = element_text(size = 6),
+        # reduce legend key (the "squares") size
+        legend.key.size = unit(0.3, "cm")
     ) +
     facet_grid(. ~ condition_group, scales = "free_x", space = "free_x") +
     scale_fill_manual(
         values = genus_colors
     ) +
+    # make fill legend keys even smaller (keywidth/keyheight) and keep default layout
+    guides(
+        fill = guide_legend(
+            keywidth = unit(0.3, "cm"),
+            keyheight = unit(0.3, "cm")
+        )
+    ) +
     ylab("Relative abundance") +
     xlab("Condition") +
     NULL
+# ...existing code...
 
 p2 <- ggplot() +
     geom_hline(yintercept = 2, linetype = "dashed", color = "grey50") +
@@ -243,7 +225,9 @@ p2 <- ggplot() +
     theme(
         axis.text.x = element_blank(),
         axis.ticks.x = element_blank(),
-        axis.title.x = element_blank()
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(size = 8),
+        axis.text.y = element_text(size = 6)
     ) +
     # ylim(c(-3, 7)) +
     facet_grid(. ~ condition_group, scales = "free_x", space = "free_x") +
@@ -253,8 +237,9 @@ p2 <- ggplot() +
 ggsave(
     here("results", "plots", "Figure_2A.pdf"),
     p2 + p + plot_layout(ncol = 1, heights = c(1.75, 4)),
-    width = 16,
-    height = 5.5
+    width = 21,
+    height = 6.5,
+    units = "cm"
 )
 
 # Also correlate all genera with all fitness values
