@@ -110,6 +110,10 @@ for (taxon_level in c("species", "genus", "family", "order", "class")) {
         mutate(family = str_split_fixed(motu_full, "\\|", 7)[, 5]) %>%
         mutate(order = str_split_fixed(motu_full, "\\|", 7)[, 4]) %>%
         mutate(class = str_split_fixed(motu_full, "\\|", 7)[, 3]) %>%
+        mutate(across(
+            c(species, genus, family, order, class),
+            \(x) str_replace(x, ".*__", "")
+        )) %>%
         group_by(donor, .data[[taxon_level]]) %>%
         summarize(`Relative abundance` = sum(`Relative abundance`)) %>%
         filter(!str_detect(.data[[taxon_level]], "incert")) %>%
@@ -184,6 +188,11 @@ for (taxon_level in c("species", "genus", "family", "order", "class")) {
         theme(
             axis.text.x = element_text(angle = 45, hjust = 1)
         ) +
+        theme(
+            axis.title.x = element_blank(),
+            axis.text.y = element_text(size = 6),
+            axis.title.y = element_text(size = 8)
+        ) +
         # scale_fill_gradientn(
         # 	#colours = viridis::viridis(100),
         # 	# use OrRd
@@ -217,10 +226,15 @@ for (taxon_level in c("species", "genus", "family", "order", "class")) {
             # axis.text.x = element_blank(),
             # axis.ticks.x = element_blank(),
             # axis.title.x = element_blank(),
-            axis.text.x = element_text(angle = 45, hjust = 1),
+            axis.text.x = element_text(angle = 45, hjust = 1, size = 6),
             axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             axis.title.y = element_blank()
+        ) +
+        theme(
+            axis.title.x = element_blank(),
+            # axis.text.y = element_text(size = 6),
+            # axis.title.y = element_text(size = 8)
         ) +
         xlim(c(2, 5)) +
         NULL
@@ -239,8 +253,9 @@ for (taxon_level in c("species", "genus", "family", "order", "class")) {
             # axis.text.x = element_blank(),
             # axis.ticks.x = element_blank(),
             # axis.title.x = element_blank(),
-            axis.text.x = element_text(angle = 45, hjust = 1),
+            axis.text.x = element_text(angle = 45, hjust = 1, size = 6),
             axis.text.y = element_blank(),
+            axis.title.x = element_blank(),
             axis.ticks.y = element_blank(),
             axis.title.y = element_blank()
         ) +
@@ -265,12 +280,13 @@ for (taxon_level in c("species", "genus", "family", "order", "class")) {
             axis.line = element_blank()
         )
 
-    p <- ggtree_object + (p_genus_heatmap + theme(axis.title.y = element_blank())) + p_shannon + p_richness + plot_layout(nrow = 1, widths = c(0.3, 1, 0.2, 0.2), guides = "collect")
+    p <- ggtree_object + (p_genus_heatmap + theme(axis.title.y = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1, size = 6))) + p_shannon + p_richness + plot_layout(nrow = 1, widths = c(0.075, 1.1, 0.2, 0.2), guides = "collect")
     ggsave(
         plot = p,
         # filename = "/g/typas/Personal_Folders/Nic/michael_visualize_in_vitro_community_comp/plots/Figure.pdf",
         filename = here("results", "plots", str_c("Figure_1A_", taxon_level, "_heatmap.pdf")),
-        width = ifelse(taxon_level == "genus", 11, 25),
-        height = 5
+        width = ifelse(taxon_level == "genus", 18, 18),
+        height = 4.5,
+        units = "cm"
     )
 }
