@@ -86,6 +86,11 @@ genus_colors <- setNames(
 genus_colors["Eggerthella"] <- "#d8599d" # deep pink
 genus_colors["Parabacteroides"] <- "#5bc3c4" # dark turquoise
 
+# swap colors between Lactobacillus and Escherichia
+temp <- genus_colors["Lactobacillus"]
+genus_colors["Lactobacillus"] <- genus_colors["Escherichia"]
+genus_colors["Escherichia"] <- temp
+
 fitness <- read_tsv(here("data", "subcommunity_fitness_data.tsv")) %>%
     rename(
         Drug = condition,
@@ -156,12 +161,15 @@ fitness <- fitness %>%
 # ...existing code...
 p <- ggplot() +
     geom_bar(
-        data = profiles,
-        aes(x = final_condition, y = relative_abundance, fill = .data[[taxon_level]]),
+        data = profiles %>% mutate(highlight = ifelse(genus == "Escherichia", "TRUE", "FALSE")) %>% arrange(desc(.data[[taxon_level]])),
+        aes(x = final_condition, y = relative_abundance, fill = .data[[taxon_level]], color = highlight), linewidth = 0.2,
         position = "stack",
         stat = "identity"
     ) +
     scale_alpha_manual(values = c("TRUE" = 1, "FALSE" = 0)) +
+    scale_color_manual(
+        values = c("TRUE" = "black", "FALSE" = NA)
+    ) +
     theme_presentation() +
     theme(
         axis.text.x = element_text(angle = 45, hjust = 1, size = 6),
@@ -236,9 +244,9 @@ p2 <- ggplot() +
 
 ggsave(
     here("results", "plots", "Figure_2A.pdf"),
-    p2 + p + plot_layout(ncol = 1, heights = c(1.75, 4)),
+    p2 + p + plot_layout(ncol = 1, heights = c(2.5, 4)),
     width = 21,
-    height = 6.5,
+    height = 8,
     units = "cm"
 )
 
