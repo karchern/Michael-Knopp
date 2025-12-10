@@ -42,14 +42,16 @@ for (sc in c(
             ) %>%
             mutate(hit = !hit == "no_hit")
         p <- ggplot() +
-            geom_point(data = tmp %>% filter(!hit), aes(x = logFC, y = -log10(adj.P.Val)), color = "grey", alpha = 0.5) +
-            geom_point(data = tmp %>% filter(hit), aes(x = logFC, y = -log10(adj.P.Val)), color = "red", alpha = 0.8) +
+            geom_point(data = tmp %>% filter(!hit), aes(x = logFC, y = -log10(P.Value.limma)), color = "grey", alpha = 0.5) +
+            geom_point(data = tmp %>% filter(P.Value.limma < 0.05 & logFC > 1.5), aes(x = logFC, y = -log10(P.Value.limma)), color = "#5a88dd", alpha = 0.8) +
+            geom_point(data = tmp %>% filter(P.Value.limma < 0.05 & logFC < -1.5), aes(x = logFC, y = -log10(P.Value.limma)), color = "#b70b0b", alpha = 0.8) +
             # geom_point(data = tmp, aes(x = logFC, y = -log10(P.Value.limma)), color = "grey", alpha = 0.2) +
             geom_text_repel(
-                data = tmp %>% filter(hit),
-                aes(x = logFC, y = -log10(adj.P.Val), label = gene_name),
+                data = tmp %>% filter((P.Value.limma < 0.05 & logFC > 4) | str_detect(`gene_name`, "4259") | str_detect(`gene_name`, "4264") | str_detect(`gene_name`, "sacA") | str_detect(`gene_name`, "lacY5")),
+                aes(x = logFC, y = -log10(P.Value.limma), label = gene_name),
                 size = 3,
-                max.overlaps = Inf
+                max.overlaps = Inf,
+                min.segment.length = 0
             ) +
             theme_presentation() +
             ggtitle(comp)
