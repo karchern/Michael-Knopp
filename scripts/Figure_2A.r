@@ -200,13 +200,13 @@ p <- ggplot() +
 # ...existing code...
 
 p2 <- ggplot() +
-    geom_hline(yintercept = 2, linetype = "dashed", color = "grey50") +
+    geom_hline(yintercept = 1.5, linetype = "dashed", color = "grey50") +
     geom_point(
-        data = fitness %>% mutate(co = as.character(ratio <= 2)),
+        data = fitness %>% mutate(co = as.character(ratio <= 1.5)),
         aes(x = final_condition, y = ratio, alpha = co),
         size = 0.5, show.legend = FALSE
     ) +
-    geom_linerange(data = fitness %>% mutate(co = ratio <= 2), aes(ymin = ratio - sd_ratio, ymax = ratio + sd_ratio, x = final_condition, alpha = co), size = 0.3, show.legend = FALSE) +
+    geom_linerange(data = fitness %>% mutate(co = ratio <= 1.5), aes(ymin = ratio - sd_ratio, ymax = ratio + sd_ratio, x = final_condition, alpha = co), size = 0.3, show.legend = FALSE) +
     scale_color_manual(
         values = c("TRUE" = "red", "FALSE" = "black")
     ) +
