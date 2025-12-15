@@ -34,19 +34,19 @@ metabolomics <- read_csv("/Users/karcher/Michael-Knopp/data/metabolomics_data.cs
 plot <- ggplot() +
     geom_point(
         data = metabolomics %>% filter(significant != "Significant"),
-        aes(x = log2FC, y = -log10(p_fdr)), color = "grey", alpha = 0.2
+        aes(x = log2FC, y = -log10(p_fdr)), color = "grey", alpha = 0.2, stroke = 0
     ) +
     geom_point(
         data = metabolomics %>% filter(significant == "Significant" & log2FC > 0),
-        aes(x = log2FC, y = -log10(p_fdr)), color = "#abb7ff", alpha = 0.5
+        aes(x = log2FC, y = -log10(p_fdr)), color = "#abb7ff", alpha = 0.5, stroke = 0
     ) +
     geom_point(
         data = metabolomics %>% filter(significant == "Significant" & log2FC < -0),
-        aes(x = log2FC, y = -log10(p_fdr)), color = "#f5b3b3", alpha = 0.5
+        aes(x = log2FC, y = -log10(p_fdr)), color = "#f5b3b3", alpha = 0.5, stroke = 0
     ) +
     geom_point(
         data = metabolomics %>% filter(`Glycerol-containing\ncompound`),
-        aes(x = log2FC, y = -log10(p_fdr)), color = "#f73a3a"
+        aes(x = log2FC, y = -log10(p_fdr)), color = "#b70b0b"
     ) +
     geom_text_repel(
         data = metabolomics %>% filter(`Glycerol-containing\ncompound`),
@@ -62,6 +62,6 @@ ggsave(
     plot = plot,
     filename = here("results/plots", "metabolomics_volcano_plot.pdf"),
     width = 12,
-    height = 8,
+    height = 12,
     units = "cm"
 )

@@ -54,7 +54,8 @@ for (sc in c(
                 min.segment.length = 0
             ) +
             theme_presentation() +
-            ggtitle(comp)
+            # ggtitle(comp)
+            NULL
         vc_plots[[str_c(comp, sc, sep = "___")]] <- p
     }
 }
