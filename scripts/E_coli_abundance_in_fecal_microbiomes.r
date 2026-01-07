@@ -12,8 +12,24 @@ bork <- read_tsv(here("data", "WGS_profiles_motus3_1.tsv"))
 bork <- bork %>%
     # as.data.frame() %>%
     # rownames_to_column("motu_full") %>%
-    filter(str_detect(dataset, "Bork")) %>%
-    select(-oxygen, -cultivation, -dataset)
+    filter(!str_detect(dataset, "Bork")) %>%
+    inner_join(
+        data.frame(
+            donor = c(
+                "MB001",
+                "MB002",
+                "MB003",
+                "MB004",
+                "MB005",
+                "MB006",
+                "MB007",
+                "MB008",
+                "MB009"
+            )
+        )
+    ) %>%
+    # select(-oxygen, -cultivation, -dataset)
+    identity()
 
 bork <- bork %>%
     filter(str_detect(motu_full, "Escherichia")) %>%
@@ -34,6 +50,7 @@ bork$donor <- factor(
 p <- ggplot() +
     geom_bar(data = bork %>% mutate(`Relative abundance [%]` = relative_abundance * 100), aes(x = donor, y = `Relative abundance [%]`), stat = "identity") +
     theme_presentation() +
+    facet_wrap(. ~ oxygen) +
     theme(
         axis.text.x = element_text(angle = 45, hjust = 1, size = 6),
         axis.title.x = element_text(size = 8),
@@ -44,7 +61,7 @@ p <- ggplot() +
 ggsave(
     here("results", "plots", "E_coli_abundance_in_fecal_microbiomes.pdf"),
     p,
-    width = 6,
+    width = 8,
     height = 5,
     units = "cm"
 )
