@@ -31,7 +31,7 @@ metabolomics <- read_csv("/Users/karcher/Michael-Knopp/data/metabolomics_data.cs
         }
     )) %>%
     mutate(
-        p_fdr <- ifelse(
+        p_fdr = ifelse(
             p_fdr < 1E-20, 1E-20, p_fdr
         )
     )
@@ -52,6 +52,12 @@ plot <- ggplot() +
     geom_point(
         data = metabolomics %>% filter(`Glycerol-containing\ncompound`),
         aes(x = log2FC, y = -log10(p_fdr)), color = "#b70b0b"
+    ) +
+    geom_abline(
+        slope = 0,
+        intercept = -log10(0.05),
+        linetype = "dashed",
+        color = "black"
     ) +
     geom_text_repel(
         data = metabolomics %>% filter(`Glycerol-containing\ncompound`),

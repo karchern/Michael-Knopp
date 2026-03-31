@@ -310,8 +310,8 @@ p_sc <- ggplot() +
         data = genus_fitness_cor_log10,
         aes(
             x = -4.85,
-            y = 5,
-            label = paste0(genus, "\n", "r=", round(cor, 2), "\n", "p=", signif(p.value, 2))
+            y = 3.5,
+            label = paste0("r=", round(cor, 2), ", ", "p=", signif(p.value, 2))
         ),
         hjust = 0,
         vjust = 1,
@@ -319,6 +319,13 @@ p_sc <- ggplot() +
     ) +
     theme_presentation() +
     facet_wrap(. ~ genus) +
+    # set facet text siez to smaller font size
+    theme(
+        strip.text = element_text(size = 7),
+        axis.text = element_text(size = 6),
+        axis.ticks = element_line(size = 0.2),
+        axis.title = element_text(size = 8)
+    ) +
     scale_color_manual(values = c("high" = "#E41A1C", "low" = "#377EB8")) +
     xlab("log10(Relative abundance + 1e-5)") +
     ylab("Fitness ratio ompK35/36/ WT") +
@@ -327,6 +334,7 @@ p_sc <- ggplot() +
 ggsave(
     plot = p_sc,
     filename = "/Users/karcher/Michael-Knopp/results/plots/supplementary_fitness_abundance_correlations.pdf",
+    height = 5
 )
 
 # For each genus, compare relative abundance between ratio <= 2  and ratio <= 2 using Wilcoxon test
