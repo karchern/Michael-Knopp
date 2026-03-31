@@ -29,7 +29,12 @@ metabolomics <- read_csv("/Users/karcher/Michael-Knopp/data/metabolomics_data.cs
         function(x) {
             any(str_detect(x, metabolites_to_highlight))
         }
-    ))
+    )) %>%
+    mutate(
+        p_fdr <- ifelse(
+            p_fdr < 1E-20, 1E-20, p_fdr
+        )
+    )
 
 plot <- ggplot() +
     geom_point(
