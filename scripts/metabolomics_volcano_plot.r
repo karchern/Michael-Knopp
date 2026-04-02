@@ -22,6 +22,7 @@ metabolites_to_highlight <- c(
 )
 
 metabolomics <- read_csv("/Users/karcher/Michael-Knopp/data/metabolomics_data.csv") %>%
+    # metabolomics <- read_xlsx("/Users/karcher/Michael-Knopp/data/Output_ttest_all_beneficial.xlsx") %>%
     rename(metabolite_name = stats_Metabolites) %>%
     # mutate(to_highlight = metabolite_name %in% metabolites_to_highlight) %>%
     mutate(`Glycerol-containing\ncompound` = map_lgl(
