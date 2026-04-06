@@ -112,3 +112,4 @@ ggsave(
     filename = here("results/plots", "goodness_of_fit_mutant_fitness_values.pdf"),
     width = 6,
     height = 3
+)
